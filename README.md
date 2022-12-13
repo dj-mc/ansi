@@ -52,6 +52,31 @@ Claims:
 - Test bash scripts, Puppet modules, etc. using local virtualized envs
 - Test those same scripts (and configs) on remote clouds like AWS
 
+Get Vagrant from [here](https://developer.hashicorp.com/vagrant/downloads).
+
+Ensure **VirtualBox** (or another VM provider) is installed!
+
+```bash
+# Create Vagrantfile (in project directory):
+vagrant init hashicorp/bionic64
+
+# Start the virtual machine
+vagrant up
+```
+
+The `SharedFoldersEnableSymlinksCreate` option is enabled.  
+https://www.virtualbox.org/manual/ch04.html#sharedfolders
+
+Or disable it: `VAGRANT_DISABLE_VBOXSYMLINKCREATE=1`
+
+```bash
+# Explore your newly created VM!
+vagrant ssh
+
+# Logout or Ctrl+D
+logout
+```
+
 ---
 
 ## Using VirtualBox
