@@ -10,6 +10,16 @@ Automate management of remote systems to control their state.
 - No required client, just use SSH
 - Push-based model
 
+Ansible has two packages: `ansible-core` (minimal) and `ansible` (full).  
+Using `pipx` to install ansible is pretty easy, but not required.
+
+```bash
+# Isolated global package
+pipx install --include-deps ansible
+# Or as a regular --user package
+python3 -m pip install --user ansible
+```
+
 ### Control Node
 
 - Ansible is installed on the control node
@@ -21,6 +31,7 @@ Automate management of remote systems to control their state.
 
 - The remote systems/hosts that Ansible controls
 - Ansible is not (usually) installed on managed nodes
+- Requires Python 2.7 or 3.5+ to run Ansible library code
 
 ### Inventory
 
@@ -29,9 +40,20 @@ Automate management of remote systems to control their state.
 - Provides information like a host's IP address
 - Describes how systems/hosts are deployed
 
+### Plays & Playbooks
+
+- A play maps managed nodes to tasks
+- A play is a basic unit of Ansible execution, and an object of a playbook
+- Each play runs one or more tasks, and each task calls an Ansible module
+- A playbook is composed of multiple plays
+- A playbook declares reusable configuration management tasks,
+- and is suitable as a multi-machine deployment system
+
 ---
 
 ## Using Ansible + Vagrant
+
+_Install Ansible/Vagrant on the same machine (the control node)._
 
 - Vagrant builds and manages reproducible VM's using a config file
 - Mimic remote machines in a local virtualized development environment
@@ -58,7 +80,7 @@ Ensure **VirtualBox** (or another VM provider) is installed!
 
 ```bash
 # Create Vagrantfile (in project directory):
-vagrant init hashicorp/bionic64
+vagrant init generic/ubuntu2004
 
 # Start the virtual machine
 vagrant up
@@ -75,6 +97,13 @@ vagrant ssh
 
 # Logout or Ctrl+D
 logout
+
+# Suspend, halt, or destroy
+vagrant suspend # Resume from where you left
+# Gracefully shut down the guest OS + guest machine
+vagrant halt
+# Remove all traces of the guest machine
+vagrant destroy
 ```
 
 ---
