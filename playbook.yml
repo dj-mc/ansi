@@ -1,30 +1,56 @@
 ---
-# Run as `vagrant provision`
+# This file is provisioned upon `vagrant up` (via Vagrantfile),
+# then it installs PostgreSQL and Docker to the guest OS.
+
+# Or run as `vagrant provision`
 # Or `ansible-playbook playbook.yml`
 # Must be run from control node
 
-# This playbook installs Docker and its deps to the guest OS
-
 - hosts: all
   become: true
-  tasks:
-    # Docker's deps from its docs
-    - name: Install Prerequisites
-      apt:
+
+  # vars_files:
+  #   - variables.yml
+
+  pre_tasks:
+    # Basic tools
+    - name: Install Basic Tools
+      ansible.builtin.apt:
+        name:
+          - htop
+          - net-tools
+        state: present
+
+    # Postgresql's prerequisites
+    - name: Install PostgreSQL Prerequisites
+      ansible.builtin.apt:
+        name:
+          - libpq-dev
+          - postgresql
+          - postgresql-contrib
+          - python3-psycopg2
+        state: present
+
+    # Docker's prerequisites
+    - name: Install Docker Prerequisites
+      ansible.builtin.apt:
         name:
           - apt-transport-https
           - ca-certificates
           - curl
           - gnupg-agent
           - software-properties-common
+        state: present
+
+    # Begin installing Docker
     - name: Add Docker apt-key
-      apt_key:
+      ansible.builtin.apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
     - name: Add Docker Repository
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: deb https://download.docker.com/linux/ubuntu focal stable
     - name: Install Docker
-      apt:
+      ansible.builtin.apt:
         name:
           - docker-ce
           - docker-ce-cli
@@ -33,4 +59,4 @@
         update_cache: yes
     - name: Add User Permissions
       # Add Vagrant user to Docker group
-      shell: "usermod -aG docker vagrant"
+      ansible.builtin.shell: "usermod -aG docker vagrant"
