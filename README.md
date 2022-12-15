@@ -49,6 +49,14 @@ python3 -m pip install --user ansible
 - A playbook declares reusable configuration management tasks,
 - and is suitable as a multi-machine deployment system
 
+### Parameters
+
+`state`:
+
+- present, absent
+- dump, restore
+- rename
+
 ---
 
 ## Using Ansible + Vagrant
@@ -108,6 +116,14 @@ vagrant destroy
 
 See `Vagrantfile` and `playbook.yml` for execution details on the VM.
 
+Manually execute a playbook:
+
+```bash
+ansible-playbook -i \
+    .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory \
+    database.yml
+```
+
 Check if PostgreSQL and Docker are installed:
 
 ```bash
@@ -119,6 +135,30 @@ sudo ls -al /var/lib/postgresql/12/main/pg_hba.conf
 systemctl status postgresql
 
 docker --version
+```
+
+Check if database is present:
+
+```bash
+vagrant ssh
+
+sudo su
+su - postgres
+psql ansi_db
+
+# Logout of postgres user
+logout
+# Exit su
+exit
+# Logout of ssh
+logout
+```
+
+WARNING:
+
+```log
+Using world-readable permissions for temporary files Ansible needs
+to create when becoming an unprivileged user. This may be insecure.
 ```
 
 ---
