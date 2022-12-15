@@ -1,0 +1,18 @@
+---
+- name: Database
+  hosts: all
+  become: true
+  vars:
+    db_name: ansi_db
+  tasks:
+    - name: Utils Present
+      ansible.builtin.package:
+        name: python3-psycopg2
+        state: present
+
+    - name: Create Database
+      become: true
+      become_user: postgres
+      community.postgresql.postgresql_db:
+        name: "{{ db_name }}"
+        state: present
