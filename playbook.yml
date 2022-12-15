@@ -9,8 +9,8 @@
 - hosts: all
   become: true
 
-  # vars_files:
-  #   - variables.yml
+  vars_files:
+    - variables.yml
 
   pre_tasks:
     # Basic tools
@@ -21,7 +21,7 @@
           - net-tools
         state: present
 
-    # Postgresql's prerequisites
+    # PostgreSQL's prerequisites
     - name: Install PostgreSQL Prerequisites
       ansible.builtin.apt:
         name:
@@ -42,13 +42,43 @@
           - software-properties-common
         state: present
 
+  tasks:
+    # Setup PostgreSQL
+    - name: Check PostgreSQL Init
+      ansible.builtin.stat:
+        # Register pg_hba.conf to variable
+        path: "{{ postgresql_data_dir }}/pg_hba.conf"
+      register: postgres_data
+
+    - name: Empty PostgreSQL Data
+      ansible.builtin.file:
+        path: "{{ postgresql_data_dir }}"
+        state: absent
+      when: not postgres_data.stat.exists
+
+    - name: Initialize PostgreSQL
+      ansible.builtin.shell: "{{ postgresql_bin_path }}/initdb -D {{ postgresql_data_dir }}"
+      # Become `postgres` user
+      become: true
+      become_user: postgres
+      # Run if data directory nonexistent
+      when: not postgres_data.stat.exists
+
+    - name: Start PostgreSQL Service
+      ansible.builtin.service:
+        name: postgresql
+        state: started
+        enabled: true
+
     # Begin installing Docker
     - name: Add Docker apt-key
       ansible.builtin.apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
+
     - name: Add Docker Repository
       ansible.builtin.apt_repository:
         repo: deb https://download.docker.com/linux/ubuntu focal stable
+
     - name: Install Docker
       ansible.builtin.apt:
         name:
@@ -57,6 +87,7 @@
           - containerd.io
         # Update sources after adding Docker repo
         update_cache: yes
+
     - name: Add User Permissions
       # Add Vagrant user to Docker group
       ansible.builtin.shell: "usermod -aG docker vagrant"
