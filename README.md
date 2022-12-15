@@ -106,6 +106,21 @@ vagrant halt
 vagrant destroy
 ```
 
+See `Vagrantfile` and `playbook.yml` for execution details on the VM.
+
+Check if PostgreSQL and Docker are installed:
+
+```bash
+vagrant ssh
+
+apt list postgresql
+apt list python3-psycopg2
+sudo ls -al /var/lib/postgresql/12/main/pg_hba.conf
+systemctl status postgresql
+
+docker --version
+```
+
 ---
 
 ## Using VirtualBox

@@ -7,9 +7,6 @@ Vagrant.configure("2") do |config|
   # Default password: vagrant
   config.vm.box = "generic/ubuntu2004"
 
-  # config.vm.network "public_network", bridge: "BRIDGE"
-  # config.vm.network "private_network", ip: "192.168.33.10"
-
   # config.vm.provider "virtualbox" do |vb|
   #   # Display the VirtualBox GUI when booting the machine
   #   vb.gui = true
@@ -22,10 +19,10 @@ Vagrant.configure("2") do |config|
     inline: "touch /tmp/script.sh; mkdir -p ~/test-dir"
 
   $do_this = <<-SCRIPT
-  ls ~/test-dir
-  echo "Hello, World!" > ~/test-dir/hello-world.txt
-  ls /tmp | grep "script.sh"
-  echo "printf true" > /tmp/script.sh
+    ls ~/test-dir
+    echo "Hello, World!" > ~/test-dir/hello-world.txt
+    ls /tmp | grep "script.sh"
+    echo "printf true" > /tmp/script.sh
   SCRIPT
 
   config.vm.provision "shell", inline: $do_this
