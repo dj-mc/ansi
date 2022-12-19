@@ -59,7 +59,7 @@ python3 -m pip install --user ansible
 
 ---
 
-## Using Ansible + Vagrant
+## Using Ansible (with Vagrant)
 
 _Install Ansible/Vagrant on the same machine (the control node)._
 
@@ -152,6 +152,17 @@ logout
 exit
 # Logout of ssh
 logout
+```
+
+[More](https://developer.hashicorp.com/vagrant/docs/cli) Vagrant commands:
+
+```bash
+# Equal to halt + up
+vagrant reload
+# State of the machines Vagrant is managing
+vagrant status
+# State of all active Vagrant environments on the system
+vagrant global-status
 ```
 
 WARNING:
