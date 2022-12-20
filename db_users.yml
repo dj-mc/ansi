@@ -1,0 +1,25 @@
+---
+# How to run:
+# ansible-playbook -i \
+#     .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory \
+#     db_users.yml
+
+- name: DB Users
+  hosts: all
+  become: true
+  vars:
+    db_user: my_user
+    db_password: password123
+  tasks:
+    - name: Utils Present
+      ansible.builtin.package:
+        name: python3-psycopg2
+        state: present
+
+    - name: Create DB User
+      become: true
+      become_user: postgres
+      community.postgresql.postgresql_user:
+        state: present
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
