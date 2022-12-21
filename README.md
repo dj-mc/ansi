@@ -49,14 +49,6 @@ python3 -m pip install --user ansible
 - A playbook declares reusable configuration management tasks,
 - and is suitable as a multi-machine deployment system
 
-### Parameters
-
-`state`:
-
-- present, absent
-- dump, restore
-- rename
-
 ---
 
 ## Using Ansible (with Vagrant)
@@ -92,6 +84,9 @@ vagrant init generic/ubuntu2004
 
 # Start the virtual machine
 vagrant up
+
+# Note the VM's IP address
+vagrant ssh -c "hostname -I | cut -d' ' -f2"
 ```
 
 The `SharedFoldersEnableSymlinksCreate` option is enabled.  
@@ -116,14 +111,6 @@ vagrant destroy
 
 See `Vagrantfile` and `playbook.yml` for execution details on the VM.
 
-Manually execute a playbook:
-
-```bash
-ansible-playbook -i \
-    .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory \
-    database.yml
-```
-
 Check if PostgreSQL and Docker are installed:
 
 ```bash
@@ -137,7 +124,21 @@ systemctl status postgresql
 docker --version
 ```
 
-Check if database is present:
+Manually execute a playbook:
+
+```bash
+ansible-playbook -i \
+    .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory \
+    database.yml
+```
+
+```bash
+ansible-playbook -i \
+    .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory \
+    db_users.yml
+```
+
+Check if a database and a user are present:
 
 ```bash
 vagrant ssh
@@ -145,6 +146,8 @@ vagrant ssh
 sudo su
 su - postgres
 psql ansi_db
+
+# \du
 
 # Logout of postgres user
 logout
@@ -275,3 +278,16 @@ systemctl restart libvirtd
 ## Automation of Linux Servers
 
 ...
+
+## Problems
+
+Running a playbook like `database.yml` manually results in a big error.
+Comment out the last two entries in `~/.ssh/known_hosts`, which were created
+from this Ansible project, and then redo the `ansible-playbook -i` command.
+
+The abridged error:
+
+```log
+WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
+Add correct host key in /home/dan/.ssh/known_hosts to get rid of this message.
+```

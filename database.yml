@@ -5,7 +5,9 @@
 #     database.yml
 
 - name: Database
+  # Target all hosts
   hosts: all
+  # Become default root user
   become: true
   vars:
     db_name: ansi_db
@@ -17,6 +19,7 @@
 
     - name: Create Database
       become: true
+      # Become postgres user
       become_user: postgres
       community.postgresql.postgresql_db:
         name: "{{ db_name }}"

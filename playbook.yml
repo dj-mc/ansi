@@ -11,7 +11,9 @@
 
 # Must be run from control node
 
+  # Target all hosts
 - hosts: all
+  # Become default root user
   become: true
 
   vars_files:
@@ -63,7 +65,7 @@
 
     - name: Initialize PostgreSQL
       ansible.builtin.shell: "{{ postgresql_bin_path }}/initdb -D {{ postgresql_data_dir }}"
-      # Become `postgres` user
+      # Become postgres user
       become: true
       become_user: postgres
       # Run if data directory nonexistent
