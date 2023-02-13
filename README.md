@@ -20,12 +20,17 @@ pipx install --include-deps ansible
 python3 -m pip install --user ansible
 ```
 
-### Control Node
+### The Control Node
 
 - Ansible is installed on the control node
 - Runs Ansible commands like `ansible` or `ansible-playbook`
 - Most computers (even laptops) are capable of being the control node
 - Multiple control nodes are possible (but see [AAP](https://www.redhat.com/en/resources/ansible-automation-platform-beginner-guide-ebook) instead)
+
+In this project the control node is installed on the same bare-metal machine
+that's running Vagrant, but could be modified so that Ansible is installed on
+and controlled from a VM created via Vagrant. See [this](https://github.com/rhce)
+repo I created that does just that.
 
 ### Managed Nodes (aka hosts)
 
@@ -73,6 +78,13 @@ Claims:
 - Consistent workflow developing and testing infrastructure scripts
 - Test bash scripts, Puppet modules, etc. using local virtualized envs
 - Test those same scripts (and configs) on remote clouds like AWS
+
+You can also build multi-machine infrastructure prototyping with a single Vagrantfile.
+
+- For example: modeling an accurate multi-server system, like web/db servers
+- Don't assume a flattened topology on a single machine is accurate to production
+- Test the interfaces of a distributed system or a web server's API endpoints
+- Test and prepare for disasters: crashes, dead machines, slow network, etc.
 
 Get Vagrant from [here](https://developer.hashicorp.com/vagrant/downloads).
 
@@ -277,13 +289,17 @@ systemctl restart libvirtd
 
 ## Automation of Linux Servers
 
-...
+todo
+
+---
 
 ## Problems
 
 Running a playbook like `database.yml` manually results in a big error.
-Comment out the last two entries in `~/.ssh/known_hosts`, which were created
-from this Ansible project, and then redo the `ansible-playbook -i` command.
+Comment out the last two entries in `~/.ssh/known_hosts`, which should have
+been created from this Ansible project, and then redo the `ansible-playbook -i` command.
+If I remember correctly: this error would occur if the VM's metadata (like its
+name) were to change, but those changes were not reflected in `~/.shh/known_hosts`.
 
 The abridged error:
 
@@ -291,3 +307,27 @@ The abridged error:
 WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
 Add correct host key in /home/dan/.ssh/known_hosts to get rid of this message.
 ```
+
+---
+
+## Vagrant Multibox
+
+`sudoedit /etc/vbox/networks.conf`
+
+Append the following:
+
+`* 10.0.0.0/8 192.168.0.0/16 172.16.0.0/12`
+
+Use the hostname defined in the Vagrantfile to access either box.
+
+```bash
+vagrant ssh ubuntu
+vagrant ssh stream
+```
+
+---
+
+## Ruby, YAML, Jinja
+
+A `Vagrantfile` is actually a Ruby file.  
+Notice the mode markers for `emacs` and `vim`
